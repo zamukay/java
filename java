@@ -222,3 +222,108 @@ int fila = jTblEstudiantes.getSelectedRow();
 jTxtNombre.setText(modelo.getValueAt(fila, 0).toString());
 jTxtNota.setText(modelo.getValueAt(fila, 1).toString());
 Con estos bloques ya tienes el CRUD completo. addRow para meter, removeRow para sacar, y setValueAt para chancar. ¡Estás armadísimo para ese examen, bro! Dale con toda.
+
+    //
+    private void jBtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
+    
+    // ==========================================
+    // 1. LÓGICA DE RADIOBUTTONS (Solo una opción)
+    // ==========================================
+    // RECUERDA: En la parte visual (Diseño), debes arrastrar un "ButtonGroup" 
+    // y asignárselo a los dos RadioButtons en sus propiedades para que no se marquen los dos a la vez.
+    
+    String estadoCivil = ""; // Variable para guardar el resultado
+    
+    if (jRadioSoltero.isSelected()) {
+        estadoCivil = "Soltero";
+    } else if (jRadioCasado.isSelected()) { // Usamos 'else if' porque es uno u otro
+        estadoCivil = "Casado";
+    } else {
+        estadoCivil = "Ninguno"; // Por si el usuario no seleccionó nada
+    }
+
+
+    // ==========================================
+    // 2. LÓGICA DE CHECKBOXES (Varias opciones)
+    // ==========================================
+    
+    String idiomas = ""; // Variable para ir acumulando las palabras
+    
+    // RECUERDA: Aquí usamos 'if' separados (NO 'else if') para que Java 
+    // revise TODOS los cuadritos uno por uno.
+    
+    if (jCheckIngles.isSelected()) {
+        idiomas = idiomas + "Inglés "; // Ojo al espacio al final para que no se peguen
+    }
+    if (jCheckFrances.isSelected()) {
+        idiomas = idiomas + "Francés ";
+    }
+    
+    // Si no marcó nada, le ponemos un texto por defecto para que no quede vacía la celda
+    if (idiomas.isEmpty()) {
+        idiomas = "Sin idiomas";
+    }
+
+
+    // ==========================================
+    // 3. MANDAR A LA TABLA
+    // ==========================================
+    
+    // Sacamos un texto normal de una caja de paso
+    String nombre = jTxtNombre.getText();
+    
+    // Metemos todo junto a la tabla (El texto normal + el RadioButton + los CheckBox acumulados)
+    modelo.addRow(new Object[]{nombre, estadoCivil, idiomas});
+
+
+    // ==========================================
+    // 4. LIMPIEZA PARA EL SIGUIENTE CLIC
+    // ==========================================
+    
+    jTxtNombre.setText("");
+    
+    // Para despintar las bolitas o cuadritos, les mandas un 'false'
+    jCheckIngles.setSelected(false);
+    jCheckFrances.setSelected(false);
+    
+    // Si usaste ButtonGroup, puedes limpiar la selección así (opcional):
+    // buttonGroup1.clearSelection(); 
+}
+
+//clases 
+private void jBtnGuardarActionPerformed(java.awt.event.ActionEvent evt) {
+    try {
+        // 1. Extraemos los textos y convertimos las notas a números
+        String nombre = jTxtNombre.getText();
+        double nota1 = Double.parseDouble(jTxtNota1.getText());
+        double nota2 = Double.parseDouble(jTxtNota2.getText());
+        
+        // ==========================================
+        // 2. INSTANCIAMOS LA CLASE (Creamos el empaque)
+        // ==========================================
+        Estudiante nuevoEstudiante = new Estudiante(nombre, nota1, nota2);
+        
+        // Le pedimos al objeto que calcule su propio promedio
+        double promedio = nuevoEstudiante.calcularPromedio();
+        
+        // ==========================================
+        // 3. MANDAMOS A LA TABLA USANDO LOS GETTERS
+        // ==========================================
+        modelo.addRow(new Object[]{
+            nuevoEstudiante.getNombre(), 
+            nuevoEstudiante.getNota1(), 
+            nuevoEstudiante.getNota2(), 
+            promedio
+        });
+        
+        // 4. Limpieza rápida de cajas
+        jTxtNombre.setText("");
+        jTxtNota1.setText("");
+        jTxtNota2.setText("");
+        
+    } catch (NumberFormatException ex) {
+        // Escudo por si meten letras en las notas
+        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, ingresa solo números en las notas.");
+    }
+}
+
